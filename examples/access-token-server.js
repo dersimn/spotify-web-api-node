@@ -5,6 +5,7 @@
  *
  * then run with the followinng command. If you don't have a client_id and client_secret yet,
  * create an application on Create an application here: https://developer.spotify.com/my-applications to get them.
+ * Make sure you whitelist the correct redirectUri in line 26.
  *
  *     node access-token-server.js "<Client ID>" "<Client Secret>"
  *
