@@ -1,5 +1,7 @@
 'use strict';
 
+const _ = require('lodash');
+
 var AuthenticationRequest = require('./authentication-request'),
   WebApiRequest = require('./webapi-request'),
   HttpManager = require('./http-manager');
@@ -1574,6 +1576,44 @@ SpotifyWebApi.prototype = {
       .withPath(url.replace(/^https:\/\/api.spotify.com/, ''))
       .build()
       .execute(HttpManager.get, callback);
+  },
+
+  /**
+   * Recursively process paging object of Spotify's response.
+   * @param {Promise} initialPromise Initial promise to use, for e.g. `spotifyApi.getUserPlaylists()`
+   * @param {string} selector Selector where to find the URL pointing to next page. For playlists it is usually `body.next`.
+   * @param {function} processFunction Function that merges every response into a single object. See examples.
+   * @returns {Promise} Promise finishes when nextSelector is `null`. Meaning the paging reached the end.
+   */
+  processNext: function(initialPromise, selector, processFunction) {
+    return new Promise((resolve, reject) => {
+      const _internalRecursive = (
+        promise,
+        processFunction,
+        resolve,
+        reject
+      ) => {
+        promise
+          .then(response => {
+            processFunction(response);
+
+            if (_.get(response, selector)) {
+              _internalRecursive(
+                this.getGeneric(_.get(response, selector)),
+                processFunction,
+                resolve,
+                reject
+              );
+            } else {
+              resolve();
+            }
+          })
+          .catch(err => {
+            reject(err);
+          });
+      };
+      _internalRecursive(initialPromise, processFunction, resolve, reject);
+    });
   }
 };
 
