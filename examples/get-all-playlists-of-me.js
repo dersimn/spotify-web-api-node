@@ -8,13 +8,10 @@ const spotifyApi = new SpotifyWebApi();
 spotifyApi.setAccessToken(process.argv.slice(2)[0]);
 
 (async () => {
-  let playlistArray = [];
-  await spotifyApi.processNext(
+  const playlistArray = await spotifyApi.getAll(
     spotifyApi.getUserPlaylists(),
     'body.next',
-    data => {
-      playlistArray = playlistArray.concat(data.body.items);
-    }
+    'body.items'
   );
 
   let playlistNames = playlistArray.map(p => p.name);

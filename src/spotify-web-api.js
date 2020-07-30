@@ -1614,6 +1614,21 @@ SpotifyWebApi.prototype = {
       };
       _internalRecursive(initialPromise, processFunction, resolve, reject);
     });
+  },
+
+  /**
+   * Recursively process paging object of Spotify's response.
+   * @param {Promise} initialPromise Initial promise to use, for e.g. `spotifyApi.getUserPlaylists()`
+   * @param {string} nextSelector Selector where to find the URL pointing to next page. For playlists it is usually `body.next`.
+   * @param {string} concatSelector Selector, where the content to be merged can be found.
+   * @returns {Promise} Promise with an array, in which all gathered data was merged.
+   */
+  getAll: async function(initialPromise, nextSelector, concatSelector) {
+    const tmp = [];
+    await this.processNext(initialPromise, nextSelector, data => {
+      tmp.push(..._.get(data, concatSelector));
+    });
+    return tmp;
   }
 };
 
