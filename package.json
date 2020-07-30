@@ -11,6 +11,7 @@
     "url": "https://github.com/thelinmichael/spotify-web-api-node.git"
   },
   "dependencies": {
+    "lodash": "^4.17.19",
     "superagent": "^3.7.0"
   },
   "scripts": {
