@@ -1616,18 +1616,29 @@ SpotifyWebApi.prototype = {
   },
 
   /**
-   * Recursively process paging object of Spotify's response.
+   * Recursively process paging object of Spotify's response up to at least `count` items.
+   * @param {Promise} initialPromise Initial promise to use, for e.g. `spotifyApi.getUserPlaylists()`
+   * @param {string} pagingObjectSelector A selector where to find the [paging object](https://developer.spotify.com/documentation/web-api/reference/object-model/#paging-object) within the response. For playlists it is usually `body`, when searching for tracks it is usually `body.tracks`.
+   * @param {number} count Abort recursion if at least `count` results were found. Usually returns 1 page more. Set to `0` to process all `next` objects.
+   * @returns {Promise} Promise with an array, in which all gathered data was merged.
+   */
+  getAtLeast: async function(initialPromise, pagingObjectSelector, count) {
+    const tmp = [];
+    await this.processNext(initialPromise, pagingObjectSelector, data => {
+      tmp.push(..._.get(data, pagingObjectSelector).items);
+      return !count || tmp.length < count;
+    });
+    return tmp;
+  },
+
+  /**
+   * Recursively process paging object of Spotify's response, unitl reaching the end.
    * @param {Promise} initialPromise Initial promise to use, for e.g. `spotifyApi.getUserPlaylists()`
    * @param {string} pagingObjectSelector A selector where to find the [paging object](https://developer.spotify.com/documentation/web-api/reference/object-model/#paging-object) within the response. For playlists it is usually `body`, when searching for tracks it is usually `body.tracks`.
    * @returns {Promise} Promise with an array, in which all gathered data was merged.
    */
   getAll: async function(initialPromise, pagingObjectSelector) {
-    const tmp = [];
-    await this.processNext(initialPromise, pagingObjectSelector, data => {
-      tmp.push(..._.get(data, pagingObjectSelector).items);
-      return true;
-    });
-    return tmp;
+    return this.getAtLeast(initialPromise, pagingObjectSelector, 0);
   }
 };
 
