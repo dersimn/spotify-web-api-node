@@ -1581,11 +1581,11 @@ SpotifyWebApi.prototype = {
   /**
    * Recursively process the paging object of Spotify's response.
    * @param {Promise} initialPromise An initial promise to use, for e.g. `spotifyApi.getUserPlaylists()`
-   * @param {string} selector A selector where to find the URL pointing to next page. For playlists it is usually `body.next`.
+   * @param {string} pagingObjectSelector A selector where to find the [paging object](https://developer.spotify.com/documentation/web-api/reference/object-model/#paging-object) within the response. For playlists it is usually `body`, when searching for tracks it is usually `body.tracks`.
    * @param {function} processFunction A function that processes every response. Can be used to merge all responses into a single object. If this function returns `false`, the recursion is aborted early.
    * @returns {Promise} The Promise resolves when the `next` field of the response is `null`, meaning the paging reached the end, or if the `processFunction` returns a `false` value.
    */
-  processNext: function(initialPromise, selector, processFunction) {
+  processNext: function(initialPromise, pagingObjectSelector, processFunction) {
     return new Promise((resolve, reject) => {
       const _internalRecursive = (
         promise,
@@ -1595,9 +1595,10 @@ SpotifyWebApi.prototype = {
       ) => {
         promise
           .then(response => {
-            if (processFunction(response) && _.get(response, selector)) {
+            const next = _.get(response, pagingObjectSelector).next;
+            if (processFunction(response) && next) {
               _internalRecursive(
-                this.getGeneric(_.get(response, selector)),
+                this.getGeneric(next),
                 processFunction,
                 resolve,
                 reject
@@ -1617,14 +1618,13 @@ SpotifyWebApi.prototype = {
   /**
    * Recursively process paging object of Spotify's response.
    * @param {Promise} initialPromise Initial promise to use, for e.g. `spotifyApi.getUserPlaylists()`
-   * @param {string} nextSelector Selector where to find the URL pointing to next page. For playlists it is usually `body.next`.
-   * @param {string} concatSelector Selector, where the content to be merged can be found.
+   * @param {string} pagingObjectSelector A selector where to find the [paging object](https://developer.spotify.com/documentation/web-api/reference/object-model/#paging-object) within the response. For playlists it is usually `body`, when searching for tracks it is usually `body.tracks`.
    * @returns {Promise} Promise with an array, in which all gathered data was merged.
    */
-  getAll: async function(initialPromise, nextSelector, concatSelector) {
+  getAll: async function(initialPromise, pagingObjectSelector) {
     const tmp = [];
-    await this.processNext(initialPromise, nextSelector, data => {
-      tmp.push(..._.get(data, concatSelector));
+    await this.processNext(initialPromise, pagingObjectSelector, data => {
+      tmp.push(..._.get(data, pagingObjectSelector).items);
       return true;
     });
     return tmp;
