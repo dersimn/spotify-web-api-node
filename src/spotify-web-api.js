@@ -510,7 +510,7 @@ SpotifyWebApi.prototype = {
    * @param {string} playlistId The playlist's ID.
    * @param {Object} [options] Optional options, such as fields.
    * @param {requestCallback} [callback] Optional callback method to be called instead of the promise.
-   * @example getPlaylistTracks('thelinmichael', '3ktAYNcRHpazJ9qecm3ptn').then(...)
+   * @example getPlaylistTracks('3ktAYNcRHpazJ9qecm3ptn').then(...)
    * @returns {Promise|undefined} A promise that if successful, resolves to an object that containing
    * the tracks in the playlist. If rejected, it contains an error object. Not returned if a callback is given.
    */
@@ -520,6 +520,21 @@ SpotifyWebApi.prototype = {
       .withQueryParameters(options)
       .build()
       .execute(HttpManager.get, callback);
+  },
+
+  /**
+   * Get all tracks in a playlist.
+   * @param {string} playlistId The playlist's ID.
+   * @param {Object} [options] Optional options, such as fields.
+   * @example const trackArray = await getAllPlaylistTracks('3ktAYNcRHpazJ9qecm3ptn')
+   * @returns {Promise} A promise that if successful, resolves to an object that containing
+   * all tracks in the playlist. If rejected, it contains an error object.
+   */
+  getAllPlaylistTracks: async function(playlistId, options) {
+    return await this.getAll(
+      this.getPlaylistTracks(playlistId, options),
+      'body'
+    );
   },
 
   /**

@@ -13,10 +13,8 @@ spotifyApi.setAccessToken(process.argv.slice(2)[0]);
     `Getting playlist ${playlist.name} with ${playlist.tracks.total} tracks.`
   );
 
-  const tracks = await spotifyApi.getAll(
-    spotifyApi.getPlaylistTracks(playlist.id),
-    'body'
-  );
+  const tracks = await spotifyApi.getAllPlaylistTracks(playlist.id);
+
   console.log(`Got ${tracks.length} in total:`);
   console.log(tracks.map(t => `${t.track.artists[0].name} - ${t.track.name}`));
 })().catch(e => {
