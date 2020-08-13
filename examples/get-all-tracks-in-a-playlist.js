@@ -15,8 +15,7 @@ spotifyApi.setAccessToken(process.argv.slice(2)[0]);
 
   const tracks = await spotifyApi.getAll(
     spotifyApi.getPlaylistTracks(playlist.id),
-    'body.next',
-    'body.items'
+    'body'
   );
   console.log(`Got ${tracks.length} in total:`);
   console.log(tracks.map(t => `${t.track.artists[0].name} - ${t.track.name}`));
