@@ -1,11 +1,7 @@
 const SpotifyWebApi = require('../');
 
 const spotifyApi = new SpotifyWebApi();
-
-/*
- * Call with `node examples/get-all-playlists-of-me.js "<Access Token>"`
- */
-spotifyApi.setAccessToken(process.argv.slice(2)[0]);
+spotifyApi.setAccessToken(process.env.SPOTIFY_ACCESS_TOKEN);
 
 (async () => {
   const playlistArray = await spotifyApi.getAtLeast(

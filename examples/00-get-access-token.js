@@ -1,7 +1,9 @@
 /**
- * Copy this file somewhere else and run:
+ * This example is using the Authorization Code flow.
  *
- *     npm install spotify-web-api-node express
+ * In root directory run
+ *
+ *     npm install express
  *
  * then run with the followinng command. If you don't have a client_id and client_secret yet,
  * create an application on Create an application here: https://developer.spotify.com/my-applications to get them.
@@ -11,9 +13,8 @@
  *
  *  and visit <http://localhost:8888/login> in your Browser.
  */
-
-const SpotifyWebApi = require('spotify-web-api-node');
-const express = require('express');
+const SpotifyWebApi = require('../');
+const express = require('../node_modules/express');
 
 const scopes = [
   'ugc-image-upload',

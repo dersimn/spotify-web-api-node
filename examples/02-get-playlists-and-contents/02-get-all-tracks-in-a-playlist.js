@@ -1,11 +1,7 @@
-const SpotifyWebApi = require('../');
+const SpotifyWebApi = require('../../');
 
 const spotifyApi = new SpotifyWebApi();
-
-/*
- * Call from root folder with `node examples/get-all-tracks-in-a-playlist.js "<Access Token>"`
- */
-spotifyApi.setAccessToken(process.argv.slice(2)[0]);
+spotifyApi.setAccessToken(process.env.SPOTIFY_ACCESS_TOKEN);
 
 (async () => {
   const playlist = (await spotifyApi.getUserPlaylists()).body.items[0];
