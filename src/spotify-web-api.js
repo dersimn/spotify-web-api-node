@@ -475,6 +475,20 @@ SpotifyWebApi.prototype = {
   },
 
   /**
+   * Get all user's playlists.
+   * @param {string} userId An optional id of the user. If you know the Spotify URI it is easy
+   * to find the id (e.g. spotify:user:<here_is_the_id>). If not provided, the id of the user that granted
+   * the permissions will be used.
+   * @param {Object} [options] The options supplied to this request.
+   * @example const playlistArray = await getAllUserPlaylists('thelinmichael')
+   * @returns {Promise} A promise that if successful, resolves to an object containing
+   *          a list of all playlists. If rejected, it contains an error object.
+   */
+  getAllUserPlaylists: async function(userId, options) {
+    return await this.getAll(this.getUserPlaylists(userId, options), 'body');
+  },
+
+  /**
    * Get a playlist.
    * @param {string} playlistId The playlist's ID.
    * @param {Object} [options] The options supplied to this request.
