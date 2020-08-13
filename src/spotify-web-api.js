@@ -1615,6 +1615,19 @@ SpotifyWebApi.prototype = {
     });
   },
 
+  processNextGenerator: async function*(initialPromise, pagingObjectSelector) {
+    let page = _.get(await initialPromise, pagingObjectSelector);
+    yield page.items;
+
+    let next = page.next;
+    while (next) {
+      page = _.get(await this.getGeneric(next), pagingObjectSelector);
+      yield page.items;
+
+      next = page.next;
+    }
+  },
+
   /**
    * Recursively process paging object of Spotify's response up to at least `count` items.
    * @param {Promise} initialPromise Initial promise to use, for e.g. `spotifyApi.getUserPlaylists()`
