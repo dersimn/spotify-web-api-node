@@ -1579,42 +1579,11 @@ SpotifyWebApi.prototype = {
   },
 
   /**
-   * Recursively process the paging object of Spotify's response.
+   * Process the paging object of Spotify's response with a generator function.
    * @param {Promise} initialPromise An initial promise to use, for e.g. `spotifyApi.getUserPlaylists()`
    * @param {string} pagingObjectSelector A selector where to find the [paging object](https://developer.spotify.com/documentation/web-api/reference/object-model/#paging-object) within the response. For playlists it is usually `body`, when searching for tracks it is usually `body.tracks`.
-   * @param {function} processFunction A function that processes every response. Can be used to merge all responses into a single object. If this function returns `false`, the recursion is aborted early.
-   * @returns {Promise} The Promise resolves when the `next` field of the response is `null`, meaning the paging reached the end, or if the `processFunction` returns a `false` value.
+   * @returns {Generator} Returns a Generator that contains one page of Spotify's paging object. Obtain the next page iteratively.
    */
-  processNext: function(initialPromise, pagingObjectSelector, processFunction) {
-    return new Promise((resolve, reject) => {
-      const _internalRecursive = (
-        promise,
-        processFunction,
-        resolve,
-        reject
-      ) => {
-        promise
-          .then(response => {
-            const next = _.get(response, pagingObjectSelector).next;
-            if (processFunction(response) && next) {
-              _internalRecursive(
-                this.getGeneric(next),
-                processFunction,
-                resolve,
-                reject
-              );
-            } else {
-              resolve();
-            }
-          })
-          .catch(err => {
-            reject(err);
-          });
-      };
-      _internalRecursive(initialPromise, processFunction, resolve, reject);
-    });
-  },
-
   processNextGenerator: async function*(initialPromise, pagingObjectSelector) {
     let page = _.get(await initialPromise, pagingObjectSelector);
     yield page.items;
@@ -1637,10 +1606,13 @@ SpotifyWebApi.prototype = {
    */
   getAtLeast: async function(initialPromise, pagingObjectSelector, count) {
     const tmp = [];
-    await this.processNext(initialPromise, pagingObjectSelector, data => {
-      tmp.push(..._.get(data, pagingObjectSelector).items);
-      return !count || tmp.length < count;
-    });
+    for await (let snippet of this.processNextGenerator(
+      initialPromise,
+      pagingObjectSelector
+    )) {
+      tmp.push(...snippet);
+      if (count && tmp.length > count) return tmp;
+    }
     return tmp;
   },
 
