@@ -635,7 +635,7 @@ SpotifyWebApi.prototype = {
     return WebApiRequest.builder(this.getAccessToken())
       .withPath('/v1/playlists/' + playlistId + '/images')
       .withHeaders({ 'Content-Type': 'image/jpeg' })
-      .withBodyParameters(base64URI)
+      .withBody(base64URI)
       .build()
       .execute(HttpManager.put, callback);
   },

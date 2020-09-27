@@ -133,6 +133,12 @@ Builder.prototype.withBodyParameters = Builder.prototype._assigner(
   'bodyParameters'
 );
 
+Builder.prototype.withBody = function(body) {
+  this.bodyParameters = body;
+
+  return this;
+};
+
 Builder.prototype.withHeaders = Builder.prototype._assigner('headers');
 
 Builder.prototype.withAuth = function(accessToken) {
