@@ -1,4 +1,4 @@
-const SpotifyWebApi = require('../');
+const SpotifyWebApi = require('../../');
 
 const spotifyApi = new SpotifyWebApi();
 spotifyApi.setAccessToken(process.env.SPOTIFY_ACCESS_TOKEN);

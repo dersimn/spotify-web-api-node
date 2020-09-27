@@ -8,7 +8,7 @@
     Playlist Name defaults to 'Test' if not provided.
 
 */
-const SpotifyWebApi = require('../../');
+const SpotifyWebApi = require('../../../');
 const https = require('https');
 
 const spotifyApi = new SpotifyWebApi();
