@@ -22,7 +22,7 @@ module.exports = {
       .withHeaders({
         Authorization:
           'Basic ' +
-          new Buffer(
+          Buffer.from(
             this.getClientId() + ':' + this.getClientSecret()
           ).toString('base64')
       })
@@ -71,7 +71,7 @@ module.exports = {
       .withHeaders({
         Authorization:
           'Basic ' +
-          new Buffer(
+          Buffer.from(
             this.getClientId() + ':' + this.getClientSecret()
           ).toString('base64')
       })
