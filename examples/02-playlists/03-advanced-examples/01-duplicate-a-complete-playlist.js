@@ -39,25 +39,7 @@ const playlistName = process.argv.slice(2)[0] || 'Test';
 
   // Get Cover Image
   const coverImageUrl = playlist.images[0].url;
-  let coverImageBuffer;
-  https
-    .get(coverImageUrl, res => {
-      const contentType = res.headers['content-type'];
-      if (contentType !== 'image/jpeg') {
-        throw new Error('Wrong content-type: ' + contentType);
-      }
-
-      let data = [];
-      res.on('data', chunk => {
-        data.push(chunk);
-      });
-      res.on('end', () => {
-        coverImageBuffer = Buffer.concat(data);
-      });
-    })
-    .on('error', e => {
-      throw new Error(e);
-    });
+  const coverImageBase64 = await getImageFromUrlAsBase64(coverImageUrl);
 
   // Create new Playlist
   const newPlaylist = await spotifyApi.createPlaylist(
@@ -85,9 +67,32 @@ const playlistName = process.argv.slice(2)[0] || 'Test';
   // Upload Cover Image
   await spotifyApi.uploadCustomPlaylistCoverImage(
     newPlaylistId,
-    coverImageBuffer.toString('base64')
+    coverImageBase64
   );
   console.log('Uploaded old Cover Image to new Playlist');
 })().catch(e => {
   console.error(e);
 });
+
+function getImageFromUrlAsBase64(url) {
+  return new Promise((resolve, reject) => {
+    https
+      .get(url, res => {
+        const contentType = res.headers['content-type'];
+        if (contentType !== 'image/jpeg') {
+          throw new Error('Wrong content-type: ' + contentType);
+        }
+
+        const data = [];
+        res.on('data', chunk => {
+          data.push(chunk);
+        });
+        res.on('end', () => {
+          resolve(Buffer.concat(data).toString('base64'));
+        });
+      })
+      .on('error', error => {
+        reject(error);
+      });
+  });
+}
