@@ -9,10 +9,16 @@ spotifyApi.setAccessToken(process.env.SPOTIFY_ACCESS_TOKEN);
   const testPlaylistId = playlistArray.find(p => p.name == playlistName).id;
   console.log(`Using Playlist '${playlistName}' with id '${testPlaylistId}'`);
 
-  spotifyApi.removeTracksFromPlaylist(testPlaylistId, [
-    { uri: 'spotify:track:4iV5W9uYEdYUVa79Axb7Rh' },
-    { uri: 'spotify:track:1301WleyT98MSxVHPZCA6M' }
-  ]);
+  await spotifyApi.addTracksToPlaylist(
+    testPlaylistId,
+    [
+      'spotify:track:4iV5W9uYEdYUVa79Axb7Rh',
+      'spotify:track:1301WleyT98MSxVHPZCA6M'
+    ],
+    {
+      position: 10
+    }
+  );
 })().catch(e => {
   console.error(e);
 });
