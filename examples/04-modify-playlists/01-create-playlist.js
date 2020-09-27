@@ -3,7 +3,7 @@
     Run with:
 
         export SPOTIFY_ACCESS_TOKEN="<Token content here>"
-        node example/01-create-playlist.js <Playlist Name>
+        node example/folder/file.js <Playlist Name>
 
     Playlist Name defaults to 'Test' if not provided.
 
