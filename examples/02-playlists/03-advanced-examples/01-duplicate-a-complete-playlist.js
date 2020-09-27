@@ -17,11 +17,11 @@ spotifyApi.setAccessToken(process.env.SPOTIFY_ACCESS_TOKEN);
 const playlistName = process.argv.slice(2)[0] || 'Test';
 
 (async () => {
-  // Find Playlist by Name
   const userId = (await spotifyApi.getMe()).body.id;
-  const playlistArray = await spotifyApi.getAllUserPlaylists();
+  const userPlaylists = await spotifyApi.getAllUserPlaylists();
 
-  const playlistByName = playlistArray.filter(p => p.name == playlistName);
+  // Find Playlist by Name
+  const playlistByName = userPlaylists.filter(p => p.name == playlistName);
   if (playlistByName.length > 1) {
     throw new Error(
       'Could not find unique Playlist with Name: ' + playlistName
