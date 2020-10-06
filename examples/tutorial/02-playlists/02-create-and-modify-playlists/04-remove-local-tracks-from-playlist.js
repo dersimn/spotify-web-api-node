@@ -26,17 +26,15 @@ const playlistName = process.argv.slice(2)[0] || 'Test';
   const tracks = await swat.getAllPlaylistTracks(playlist.id);
 
   // Filter Local Tracks and save their Position
-  const localTracks = {};
-  tracks.forEach((track, position) => {
-    if (track.is_local) {
-      localTracks[position] = track;
-    }
+  const localTracks = tracks.filter((track, index) => {
+    track.position = index;
+    return track.is_local;
   });
 
   // Remove all occourences of the specified Track URIs
-  for (let [position, track] of Object.entries(localTracks)) {
-    console.log('Removing', position, track.track.uri);
-    await spotifyApi.removeTracksFromPlaylistByPosition(playlist.id, [parseInt(position)], playlist.snapshot_id);
+  for (const track of localTracks) {
+    console.log('Removing', track.position, track.track.uri);
+    await spotifyApi.removeTracksFromPlaylistByPosition(playlist.id, [track.position], playlist.snapshot_id);
   }
 
 })().catch(e => {
