@@ -48,7 +48,7 @@ class SpotifyWebApiTools {
    * @returns {Promise} Promise with an array, in which all gathered data was merged.
    */
   async getAll(initialPromise, pagingObjectSelector) {
-    return this.getAtLeast(initialPromise, pagingObjectSelector, 0);
+    return this.getAtLeast(initialPromise, pagingObjectSelector);
   }
 
   /**
