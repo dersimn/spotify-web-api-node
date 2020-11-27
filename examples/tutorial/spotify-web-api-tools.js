@@ -101,7 +101,7 @@ class SpotifyWebApiTools {
       );
     }
     if (playlistByName.length === 0) {
-      throw new Error('Could not Playlist with Name: ' + playlistName);
+      throw new Error('Could not find Playlist with Name: ' + playlistName);
     }
 
     return playlistByName[0];
