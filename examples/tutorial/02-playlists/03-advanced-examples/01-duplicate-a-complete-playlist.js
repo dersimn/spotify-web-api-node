@@ -45,7 +45,7 @@ const playlistName = process.argv.slice(2)[0] || 'Test';
     `Created Playlist '${newPlaylist.body.name}' with id '${newPlaylistId}'`
   );
 
-  // Add Tracks to new Playlist (add max. 100 Tracks per Request according do API Spec)
+  // Add Tracks to new Playlist (add max. 100 Tracks per Request according to API Spec)
   const trackUris = tracks.map(t => t.track.uri);
   const chunkLength = 100;
   for (let i = 0; i < trackUris.length; i += chunkLength) {
